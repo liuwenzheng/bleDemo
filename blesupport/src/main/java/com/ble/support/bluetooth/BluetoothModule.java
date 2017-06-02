@@ -38,6 +38,8 @@ public class BluetoothModule {
     private BluetoothGattCharacteristic mNotifyCharacteristic;
     private BluetoothGatt mBluetoothGatt;
     private BluetoothGattCallback mGattCallback;
+    private static final UUID SERVIE_UUID =
+            UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
     private static final UUID CHARACTERISTIC_DESCRIPTOR_UUID =
             UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     /**
@@ -45,6 +47,12 @@ public class BluetoothModule {
      */
     private static final UUID CHARACTERISTIC_UUID_NOTIFY =
             UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+    /**
+     * Write, APP send command to wristbands using this characteristic
+     */
+    private static final UUID CHARACTERISTIC_UUID_WRITE =
+            UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+
     private static final Object LOCK = new Object();
 
 
@@ -230,6 +238,15 @@ public class BluetoothModule {
         }
     }
 
+    /**
+     * @Date 2017/6/2
+     * @Author wenzheng.liu
+     * @Description 发送命令
+     */
+    public void sendOrder(byte[] byteArray) {
+        writeCharacteristicData(mBluetoothGatt, byteArray);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -312,5 +329,29 @@ public class BluetoothModule {
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
         }
+    }
+
+    /**
+     * @Date 2017/5/10
+     * @Author wenzheng.liu
+     * @Description 发送数据
+     */
+    private void writeCharacteristicData(BluetoothGatt mBluetoothGatt, byte[] byteArray) {
+        if (mBluetoothGatt == null) {
+            return;
+        }
+        BluetoothGattService service = mBluetoothGatt.getService(SERVIE_UUID);
+        if (service == null) {
+            return;
+        }
+        BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_UUID_WRITE);
+        if (characteristic == null) {
+            return;
+        }
+        LogModule.i("发送数据：");
+        DigitalConver.formatData(byteArray);
+        characteristic.setValue(byteArray);
+        characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+        mBluetoothGatt.writeCharacteristic(characteristic);
     }
 }

@@ -62,4 +62,17 @@ public class DigitalConver {
         }
         return bString;
     }
+
+    /**
+     * @Date 2017/6/2
+     * @Author wenzheng.liu
+     * @Description 16进制数组转byte数组
+     */
+    public static byte[] hexStringArray2byteArray(String[] hexString) {
+        byte[] data = new byte[hexString.length];
+        for (int i = 0; i < hexString.length; i++) {
+            data[i] = (byte) Integer.parseInt(hexString[i], 16);
+        }
+        return data;
+    }
 }

@@ -7,10 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ble.support.bluetooth.BluetoothModule;
+import com.ble.support.utils.DigitalConver;
 import com.fitpolo.ble.demo.R;
 
 import butterknife.Bind;
@@ -23,9 +27,12 @@ import butterknife.ButterKnife;
  * @ClassPath com.fitpolo.ble.demo.activity.ShowOrderActivity
  */
 public class ShowOrderActivity extends Activity {
+    public final static String REGEX_HEX = "^[0-9a-fA-F]+$";
 
     @Bind(R.id.tv_msg)
     TextView tvMsg;
+    @Bind(R.id.et_order)
+    EditText etOrder;
     private LocalBroadcastManager mBroadcastManager;
 
     @Override
@@ -66,5 +73,24 @@ public class ShowOrderActivity extends Activity {
 
     public void disConn(View view) {
         finish();
+    }
+
+    public void sendOrder(View view) {
+        String order = etOrder.getText().toString().replaceAll(" ", "").toUpperCase();
+        if (TextUtils.isEmpty(order)) {
+            Toast.makeText(this, "命令不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (order.length() % 2 != 0 || !order.matches(REGEX_HEX)) {
+            Toast.makeText(this, "请填写2位十六进制数", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String[] strArray = new String[order.length() / 2];
+        for (int i = 0, j = 0; i < order.length(); i += 2) {
+            strArray[j] = order.substring(i, i + 2);
+            j++;
+        }
+        byte[] byteArray = DigitalConver.hexStringArray2byteArray(strArray);
+        BluetoothModule.getInstance().sendOrder(byteArray);
     }
 }
