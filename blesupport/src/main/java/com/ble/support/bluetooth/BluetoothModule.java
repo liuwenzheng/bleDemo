@@ -44,7 +44,7 @@ public class BluetoothModule {
      * Notify, wristbands send data to APP using this characteristic
      */
     private static final UUID CHARACTERISTIC_UUID_NOTIFY =
-            UUID.fromString("0000ffc2-0000-1000-8000-00805f9b34fb");
+            UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
     private static final Object LOCK = new Object();
 
 
@@ -159,9 +159,9 @@ public class BluetoothModule {
             public void onResponse(BluetoothGattCharacteristic characteristic) {
                 byte[] data = characteristic.getValue();
                 LogModule.i("接收数据：");
-                String[] formatDatas = DigitalConver.formatData(data);
+                String formatDatas = DigitalConver.formatData(data);
                 Intent intent = new Intent(new Intent("ACTION_ORDER_RESULT"));
-                intent.putExtra("order", formatDatas.toString());
+                intent.putExtra("order", formatDatas);
                 mBroadcastManager.sendBroadcast(intent);
             }
         });
@@ -260,12 +260,12 @@ public class BluetoothModule {
         // 遍历所有服务，找到手环的服务
         for (BluetoothGattService gattService : gattServices) {
             uuid = gattService.getUuid().toString();
-            if (uuid.startsWith("0000ffc0")) {
+            if (uuid.startsWith("0000ffe0")) {
                 List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
                 // 遍历所有特征，找到发出的特征
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     uuid = gattCharacteristic.getUuid().toString();
-                    if (uuid.startsWith("0000ffc2")) {
+                    if (uuid.startsWith("0000ffe1")) {
                         int charaProp = gattCharacteristic.getProperties();
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
                             if (mNotifyCharacteristic != null) {

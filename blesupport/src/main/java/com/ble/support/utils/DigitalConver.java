@@ -15,14 +15,13 @@ public class DigitalConver {
      * @Author wenzheng.liu
      * @Description 格式化数据
      */
-    public static String[] formatData(byte[] data) {
+    public static String formatData(byte[] data) {
         if (data != null && data.length > 0) {
             StringBuilder stringBuilder = new StringBuilder(data.length);
             for (byte byteChar : data)
                 stringBuilder.append(byte2HexString(byteChar));
             LogModule.i(stringBuilder.toString());
-            String[] datas = stringBuilder.toString().split(" ");
-            return datas;
+            return stringBuilder.toString();
         }
         return null;
     }
