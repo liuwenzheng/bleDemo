@@ -46,12 +46,12 @@ public class BluetoothModule {
      * Notify, wristbands send data to APP using this characteristic
      */
     private static final UUID CHARACTERISTIC_UUID_NOTIFY =
-            UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+            UUID.fromString("00000003-0000-1000-8000-00805f9b34fb");
     /**
      * Write, APP send command to wristbands using this characteristic
      */
     private static final UUID CHARACTERISTIC_UUID_WRITE =
-            UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+            UUID.fromString("00000002-0000-1000-8000-00805f9b34fb");
 
     private static final Object LOCK = new Object();
 
@@ -282,7 +282,7 @@ public class BluetoothModule {
                 // 遍历所有特征，找到发出的特征
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     uuid = gattCharacteristic.getUuid().toString();
-                    if (uuid.startsWith("0000ffe1")) {
+                    if (uuid.startsWith("00000003")) {
                         int charaProp = gattCharacteristic.getProperties();
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
                             if (mNotifyCharacteristic != null) {
